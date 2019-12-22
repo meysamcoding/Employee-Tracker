@@ -97,18 +97,16 @@ function add_department() {
     inquirer
         .prompt({
             type: "input",
-            name: "name_id",
+            name: "name",
             message: "what is name of department?"
         }).then(function (answer) {
-            // const query = "INSERT INTO department (name_id) SET ?",
-            // {
-            //     name_id: answer.name_id
-            // }
-            connection.query("INSERT INTO department SET ?",
+
+            connection.query(
+                "INSERT INTO department SET ?",
                 {
-                    name_id: answer.name_id
+                    name_id: answer.name
                 },
-                function (err, answer) {
+                function (err) {
                     if (err) throw err;
                     console.log("you succssecfully add to the table department.")
 
@@ -117,23 +115,79 @@ function add_department() {
             );
         });
 };
-
-
-
-    
-
- 
 function add_roles() {
+    inquirer
+        .prompt([{
+            type: "input",
+            name: "title",
+            message: "what is name of roles title?"
+        },
+        {
+            type: "input",
+            name: "salary",
+            message: "what is name of salary?"
+        },
+        {
+            type: "input",
+            name: "dep_id",
+            message: "what is your department id?"
+        }
+        ]).then(function (answer) {
 
+            connection.query(
+                "INSERT INTO role SET ?",
+                {
+                    title: answer.title,
+                    salary: answer.salary,
+                    department_id: answer.dep_id
 
-
-    startprogram();
-
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("you succssecfully add to the table department.");
+                    startprogram();
+                }
+            );
+        });
 }
 function add_employees() {
+    inquirer
+        .prompt([{
+            type: "input",
+            name: "first_name",
+            message: "what is your emplyee first name?"
+        },
+        {
+            type: "input",
+            name: "last_name",
+            message: "what is your emplyee last name?"
+        },
+        {
+            type: "input",
+            name: "role_id",
+            message: "what is your employee role id?"
+        },
+        {
+            type: "input",
+            name: "manager_id",
+            message: "what is your employee manager id?"
+        }]).then(function (answer) {
 
-
-    startprogram();
+            connection.query(
+                "INSERT INTO employee SET ?",
+                {
+                    first_name: answer.first_name,
+                    last_name: answer.last_name,
+                    role_id: answer.role_id,
+                    manager_id: answer.manager_id
+                },
+                function (err) {
+                    if (err) throw err;
+                    console.log("you succssecfully add to the table department.");
+                    startprogram();
+                }
+            );
+        });
 
 }
 function view_department() {
@@ -181,9 +235,43 @@ function updateemployee() {
 }
 function remove_dep() {
 
+    connection.query("SELECT * FROM department", function (err, res) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: "rawlist",
+                    name: "name_id",
+                    message: "what is name of department?",
+                    choices: function () {
+                        var namelist = [];
+                        for (let i = 0; i < res.length; i++) {
+                            namelist.push(res[i].name_id);
+                        }
+                        return namelist;
+                    }
+                }
+            ]).then(function (answer) {
+                var choicename;
+                for(var i = 0; i < res.length; i++){
+                    if(res[i].name_id === answer.name){
+                        choicename= res[i];
+                    }
+                }             
+                connection.query(
+                    "DELETE FROM department WHERE ?",
+                    {
+                        name_id: answer.name_id
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("you succssecfully add to the table department.")
 
-    startprogram();
-
+                        startprogram();
+                    }
+                );
+            });
+    });
 }
 function remove_role() {
 
