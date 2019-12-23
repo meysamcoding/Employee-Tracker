@@ -80,19 +80,13 @@ function startprogram() {
         });
 }
 function showalltable() {
-    const query = "SELECT first_name, last_name,title, name_id,salary FROM employee JOIN role ON employee.id = role.id JOIN department ON role.id = department.id ";
+    const query = "SELECT first_name, last_name,title, name_id,salary FROM employee JOIN role ON employee.id = role.id JOIN department ON department.id = department.id ";
     connection.query(query, function (err, res) {
         if (err) throw err;
         console.table(res);
         startprogram();
     });
-
-
-
 }
-
-
-
 function add_department() {
     inquirer
         .prompt({
@@ -140,11 +134,10 @@ function add_roles() {
                     title: answer.title,
                     salary: answer.salary,
                     department_id: answer.dep_id
-
                 },
                 function (err) {
                     if (err) throw err;
-                    console.log("you succssecfully add to the table department.");
+                    console.log("you succssecfully add to the table role.");
                     startprogram();
                 }
             );
@@ -183,58 +176,40 @@ function add_employees() {
                 },
                 function (err) {
                     if (err) throw err;
-                    console.log("you succssecfully add to the table department.");
+                    console.log("you succssecfully add to the table employees.");
                     startprogram();
                 }
             );
         });
-
 }
 function view_department() {
     const query = "SELECT  * FROM  department ";
     connection.query(query, function (err, res) {
         if (err) throw err;
-
-
         console.table(res);
         startprogram();
     });
-
-
 }
 function view_roles() {
     const query = "SELECT  * FROM  role ";
     connection.query(query, function (err, res) {
         if (err) throw err;
-
-
         console.table(res);
         startprogram();
     });
-
-
 }
 function view_employee() {
     const query = "SELECT  * FROM  employee ";
     connection.query(query, function (err, res) {
         if (err) throw err;
-
-
         console.table(res);
         startprogram();
     });
-
-
 }
 function updateemployee() {
-
-
-
     startprogram();
-
 }
 function remove_dep() {
-
     connection.query("SELECT * FROM department", function (err, res) {
         if (err) throw err;
         inquirer
@@ -252,12 +227,6 @@ function remove_dep() {
                     }
                 }
             ]).then(function (answer) {
-                var choicename;
-                for(var i = 0; i < res.length; i++){
-                    if(res[i].name_id === answer.name){
-                        choicename= res[i];
-                    }
-                }             
                 connection.query(
                     "DELETE FROM department WHERE ?",
                     {
@@ -265,7 +234,7 @@ function remove_dep() {
                     },
                     function (err) {
                         if (err) throw err;
-                        console.log("you succssecfully add to the table department.")
+                        console.log("you succssecfully remove table department.")
 
                         startprogram();
                     }
@@ -274,12 +243,70 @@ function remove_dep() {
     });
 }
 function remove_role() {
+    connection.query("SELECT * FROM role", function (err, res) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: "rawlist",
+                    name: "title",
+                    message: "what is name of role?",
+                    choices: function () {
+                        var titlelist = [];
+                        for (var i = 0; i < res.length; i++) {
+                            titlelist.push(res[i].title);
+                        }
+                        return titlelist;
+                    }
+                }
+            ]).then(function (answer) {
+                connection.query(
+                    "DELETE FROM role WHERE ?",
+                    {
+                        title: answer.title
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("you succssecfully remove role table.")
 
-
-    startprogram();
-
+                        startprogram();
+                    }
+                );
+            });
+    });
 }
 function remove_employee() {
+    connection.query("SELECT * FROM employee", function (err, res) {
+        if (err) throw err;
+        inquirer
+            .prompt([
+                {
+                    type: "rawlist",
+                    name: "first_name",
+                    message: "what is name of employee?",
+                    choices: function () {
+                        var first_namelist = [];
+                        for (var i = 0; i < res.length; i++) {
+                            first_namelist.push(res[i].first_name);
+                        }
+                        return first_namelist;
+                    }
+                }
+            ]).then(function (answer) {
+                connection.query(
+                    "DELETE FROM employee WHERE ?",
+                    {
+                        first_name: answer.first_name
+                    },
+                    function (err) {
+                        if (err) throw err;
+                        console.log("you succssecfully remove employee table.")
+
+                        startprogram();
+                    }
+                );
+            });
+    });
 
 
 
